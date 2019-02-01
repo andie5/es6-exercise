@@ -4,7 +4,7 @@
 describe('rest in function params', () => {
 
   it('must be the last parameter', () => {
-    const fn = ( ...rest) => {
+    const fn = (...rest) => {
       expect([1, 2]).toEqual(rest)
     }
     fn(1, 2)
