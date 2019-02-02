@@ -5,7 +5,9 @@
 describe('a Promise represents an operation that hasn`t completed yet, but is expected in the future', () => {
 
   it('`Promise` is a global function', () => {
-    const expectedType = '???'
+    // const expectedType = 'test'
+    // why does it only recognise the string function
+    const expectedType = 'function'
 
     expect(typeof Promise).toEqual(expectedType)
   })
@@ -14,6 +16,7 @@ describe('a Promise represents an operation that hasn`t completed yet, but is ex
 
     it('resolve a promise by calling the `resolve` function given as first parameter of the function parameter', (done) => {
       let promise = new Promise((resolve) => {
+        resolve();
       })
 
       promise
@@ -22,7 +25,8 @@ describe('a Promise represents an operation that hasn`t completed yet, but is ex
     })
 
     it('rejecting a promise is done by calling the callback given as 2nd parameter of the function parameter', (done) => {
-      let promise = new Promise(() => {
+      let promise = new Promise((resolve,callback) => {
+        callback()
       })
 
       promise
@@ -43,7 +47,7 @@ describe('a promise can be created in multiple ways', () => {
   describe('most commonly Promises get created using the constructor', () => {
 
     it('by passing a resolve function to it', () => {
-      const promise = new Promise(() => resolve())
+      const promise = new Promise((resolve) => resolve())
       return promise
     })
   })
@@ -61,7 +65,7 @@ describe('a promise can be created in multiple ways', () => {
       // Note: In that case you need to modify the expect!!!
       promise
         .then(value => {
-          expect(value).toEqual([1, 2])
+          expect(value).toEqual([1, 2, 3])
           done()
         })
         .catch(e => {
@@ -96,7 +100,7 @@ describe('chaining multiple promises can enhance readability', () => {
     it('`then()` receives the result of the promise it was called on', () => {
       const wordsPromise = Promise.resolve('one   space     between each     word')
       return wordsPromise
-        .then(string => removeMultipleSpaces())
+        .then(string => removeMultipleSpaces(string))
         .then(actual => {
           expect(actual).toEqual('one space between each word')
         })
@@ -108,7 +112,8 @@ describe('chaining multiple promises can enhance readability', () => {
     it('multiple `then()`s can be chained', () => {
       const wordsPromise = Promise.resolve('Sentence without       an end')
       return wordsPromise
-        .then(removeMultipleSpaces)
+        .then(string => removeMultipleSpaces(string))
+        .then(string => appendPeriod(string))
         .then(actual => {
           expect(actual).toEqual('Sentence without an end.')
         })
@@ -120,8 +125,8 @@ describe('chaining multiple promises can enhance readability', () => {
     it('order of the `then()`s matters', () => {
       const wordsPromise = Promise.resolve('Sentence without       an end ')
       return wordsPromise
+        .then(trim) 
         .then(appendPeriod)
-        .then(trim)
         .then(removeMultipleSpaces)
         .then(actual => {
           expect(actual).toEqual('Sentence without an end.')
